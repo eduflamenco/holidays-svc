@@ -11,8 +11,8 @@ func NewPaymentMakerServer() *httptest.Server {
 	response := CreatePaymentStartResponseMock()
 	mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case "/payment/start":
-			if r.Method != http.MethodPost {
+		case "/api/holidays":
+			if r.Method != http.MethodGet {
 				w.WriteHeader(http.StatusMethodNotAllowed)
 				return
 			}
@@ -26,7 +26,6 @@ func NewPaymentMakerServer() *httptest.Server {
 		}
 	}))
 
-	// URL del mock server (ej: "http://127.0.0.1:54321")
 	println("Mock server running at:", mockServer.URL)
 	return mockServer
 }

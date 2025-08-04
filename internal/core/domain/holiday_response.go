@@ -6,9 +6,9 @@ type HoliDayResponse struct {
 }
 
 type HoliDay struct {
-	Date        string `json:"date"`
-	Title       string `json:"title"`
-	Type        string `json:"type"`
-	Inalienable bool   `json:"inalienable"`
-	Extra       string `json:"extra"`
+	Date        string `json:"date" xml:"date"`
+	Title       string `json:"title" xml:"title"`
+	Type        string `json:"type" xml:"type"`
+	Inalienable bool   `json:"inalienable" xml:"inalienable"`
+	Extra       string `json:"extra" xml:"extra"`
 }

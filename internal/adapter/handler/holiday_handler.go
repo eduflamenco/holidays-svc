@@ -18,5 +18,10 @@ func (s *server) holidayHandler(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
+
+	if ctx.GetHeader("Content-Type") == "application/xml" {
+		ctx.XML(http.StatusOK, response)
+	}
 	ctx.JSON(http.StatusOK, response)
+
 }

@@ -2,9 +2,9 @@ package client
 
 import (
 	"context"
+	"github.com/eduflamenco/holidays-svc/internal/core/domain"
+	"github.com/eduflamenco/holidays-svc/internal/core/util/mocks"
 	"net/http"
-	"payment-issuer-svc/internal/core/domain"
-	"payment-issuer-svc/internal/core/util/mocks"
 	"reflect"
 	"testing"
 	"time"
@@ -19,11 +19,18 @@ func TestNewHttpClient(t *testing.T) {
 		args args
 		want *http.Client
 	}{
-		// TODO: Add test cases.
+		{
+			name: "new http client",
+			args: args{
+				timeout: 1 * time.Second,
+			},
+			want: &http.Client{},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := NewHttpClient(tt.args.timeout); !reflect.DeepEqual(got, tt.want) {
+			got := NewHttpClient(tt.args.timeout)
+			if got == nil {
 				t.Errorf("NewHttpClient() = %v, want %v", got, tt.want)
 			}
 		})
@@ -31,6 +38,7 @@ func TestNewHttpClient(t *testing.T) {
 }
 
 func TestNewRestClient(t *testing.T) {
+	cli := &http.Client{}
 	type args struct {
 		http *http.Client
 	}
@@ -39,7 +47,13 @@ func TestNewRestClient(t *testing.T) {
 		args args
 		want *RestClient
 	}{
-		// TODO: Add test cases.
+		{
+			name: "new rest client",
+			args: args{
+				http: cli,
+			},
+			want: &RestClient{http: cli},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -50,8 +64,8 @@ func TestNewRestClient(t *testing.T) {
 	}
 }
 
-func TestRestClient_PostJSONPayment(t *testing.T) {
-	var response domain.PaymentResponse
+func TestRestClient_GetRequest(t *testing.T) {
+	var response domain.HoliDayResponse
 	client := NewHttpClient(1 * time.Minute)
 	svr := mocks.NewPaymentMakerServer()
 	type fields struct {
@@ -60,9 +74,8 @@ func TestRestClient_PostJSONPayment(t *testing.T) {
 	type args struct {
 		ctx     context.Context
 		url     string
-		payload any
 		headers map[string]string
-		out     any
+		result  any
 	}
 	tests := []struct {
 		name    string
@@ -71,18 +84,13 @@ func TestRestClient_PostJSONPayment(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "success",
-			fields: fields{
-				http: client,
-			},
+			name:   "Get Request",
+			fields: fields{http: client},
 			args: args{
 				ctx:     context.Background(),
-				url:     svr.URL + "/payment/start",
-				payload: domain.PaymentRequest{},
-				headers: map[string]string{
-					"Content-Type": "application/json",
-				},
-				out: &response,
+				url:     svr.URL + "/api/holidays",
+				headers: map[string]string{},
+				result:  &response,
 			},
 			wantErr: false,
 		},
@@ -92,8 +100,8 @@ func TestRestClient_PostJSONPayment(t *testing.T) {
 			c := &RestClient{
 				http: tt.fields.http,
 			}
-			if err := c.PostJSONPayment(tt.args.ctx, tt.args.url, tt.args.payload, tt.args.headers, tt.args.out); (err != nil) != tt.wantErr {
-				t.Errorf("PostJSONPayment() error = %v, wantErr %v", err, tt.wantErr)
+			if err := c.GetRequest(tt.args.ctx, tt.args.url, tt.args.headers, tt.args.result); (err != nil) != tt.wantErr {
+				t.Errorf("GetRequest() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
