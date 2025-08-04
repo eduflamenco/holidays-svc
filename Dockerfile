@@ -17,7 +17,7 @@ FROM alpine:3.18
 # Copiar binario desde el builder
 WORKDIR /app
 COPY --from=builder /app/bin/holidays-svc /app/holidays-svc
-COPY --from=builder /app/app.env ./app.env
+COPY --from=builder /app/app.env .
 
 RUN chmod +x /app/holidays-svc
 
